@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "467108984114",
+    "project_id": "recipefy-2eac9",
+    "storage_bucket": "recipefy-2eac9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467108984114:android:a3852828b0c6324dea532b",
+        "android_client_info": {
+          "package_name": "com.example.recipefy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467108984114-fm2r200jo37rc48vt9h2bjgdt5s324p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApJslFdkTNG4F5pXTU2RtcPQH_w_051q0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467108984114-fm2r200jo37rc48vt9h2bjgdt5s324p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
