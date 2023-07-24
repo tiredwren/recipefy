@@ -7,4 +7,6 @@
     <color name="green">#588157</color>
     <color name="purple">#48435C</color>
     <color name="blue">#88CCF1</color>
+    <color name="card_default">#FFFFFF</color>
+    <color name="card_selected">#FFC107</color>
 </resources>
