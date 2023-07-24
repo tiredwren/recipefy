@@ -16,7 +16,10 @@
         android:theme="@style/Theme.Recipefy"
         tools:targetApi="33">
         <activity
-            android:name=".HomeActivity"
+            android:name=".RecipesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FridgeActivity"
             android:exported="false" />
         <activity
             android:name=".RegistrationActivity"
