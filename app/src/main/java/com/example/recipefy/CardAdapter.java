@@ -1,74 +1,84 @@
 package com.example.recipefy;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
+import java.util.ArrayList;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
-    private List<CardItem> cardItemList;
-    private Context context;
+    private final ArrayList<CardItem> cardList;
+    private final ArrayList<String> selectedItemsList;
+    private final OnDeleteClickListener deleteClickListener;
+    private final OnItemSelectListener itemSelectListener;
 
-    public CardAdapter(List<CardItem> cardItemList, Context context) {
-        this.cardItemList = cardItemList;
-        this.context = context;
+    public CardAdapter(ArrayList<CardItem> cardList, ArrayList<String> selectedItemsList,
+                       OnDeleteClickListener deleteClickListener, OnItemSelectListener itemSelectListener) {
+        this.cardList = cardList;
+        this.selectedItemsList = selectedItemsList;
+        this.deleteClickListener = deleteClickListener;
+        this.itemSelectListener = itemSelectListener;
+    }
+
+    public void removeSelectedItem(String itemId) {
+        selectedItemsList.remove(itemId);
     }
 
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_layout, parent, false);
-        return new CardViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
+        return new CardViewHolder(view, deleteClickListener, itemSelectListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        CardItem cardItem = cardItemList.get(position);
-        holder.tvItemName.setText(cardItem.getItemName());
-        holder.tvExpiryDate.setText(formatDate(cardItem.getExpiryDate()));
-
-        int backgroundColor = ContextCompat.getColor(context,
-                cardItem.isSelected() ? R.color.card_selected : android.R.color.white);
-        holder.cardView.setCardBackgroundColor(backgroundColor);
-
-        holder.cardView.setOnClickListener(v -> {
-            cardItem.setSelected(!cardItem.isSelected());
-            int newBackgroundColor = ContextCompat.getColor(context,
-                    cardItem.isSelected() ? R.color.card_selected : android.R.color.white);
-            holder.cardView.setCardBackgroundColor(newBackgroundColor);
-        });
+        CardItem currentItem = cardList.get(position);
+        holder.textViewItemName.setText(currentItem.getItemName());
+        holder.textViewExpiryDate.setText(currentItem.getExpiryDate());
+        holder.checkBoxItemSelect.setChecked(selectedItemsList.contains(currentItem.getItemId()));
     }
 
     @Override
     public int getItemCount() {
-        return cardItemList.size();
+        return cardList.size();
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
-        TextView tvItemName;
-        TextView tvExpiryDate;
-        CardView cardView;
+    public class CardViewHolder extends RecyclerView.ViewHolder {
 
-        public CardViewHolder(@NonNull View itemView) {
+        private TextView textViewItemName;
+        private TextView textViewExpiryDate;
+        private CheckBox checkBoxItemSelect;
+
+        public CardViewHolder(@NonNull View itemView, OnDeleteClickListener deleteClickListener,
+                              OnItemSelectListener itemSelectListener) {
             super(itemView);
-            tvItemName = itemView.findViewById(R.id.itemNameTextView);
-            tvExpiryDate = itemView.findViewById(R.id.expiryDateTextView);
-            cardView = itemView.findViewById(R.id.cardView);
+
+            textViewItemName = itemView.findViewById(R.id.itemNameTextView);
+            textViewExpiryDate = itemView.findViewById(R.id.expiryDateTextView);
+            checkBoxItemSelect = itemView.findViewById(R.id.check_box_select);
+
+            checkBoxItemSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                itemSelectListener.onItemSelect(getAdapterPosition(), isChecked);
+            });
+
+            itemView.findViewById(R.id.btnDelete).setOnClickListener(v -> {
+                deleteClickListener.onDeleteClick(cardList.get(getAdapterPosition()));
+            });
         }
     }
 
-    private String formatDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-        return sdf.format(date);
+    public interface OnDeleteClickListener {
+        void onDeleteClick(CardItem item);
+    }
+
+    public interface OnItemSelectListener {
+        void onItemSelect(int position, boolean isSelected);
     }
 }
