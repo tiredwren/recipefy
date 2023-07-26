@@ -33,14 +33,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".ExpiryNotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-        <service android:name=".NotificationService" />
-
-
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

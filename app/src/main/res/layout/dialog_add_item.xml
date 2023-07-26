@@ -10,9 +10,10 @@
         android:layout_height="wrap_content"
         android:hint="Item Name" />
 
-    <DatePicker
-        android:id="@+id/datePickerExpiryDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/button_expiry_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </LinearLayout>

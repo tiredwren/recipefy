@@ -1,0 +1,51 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
+    android:padding="8dp"
+    app:cardBackgroundColor="@color/light_orange"
+    app:cardCornerRadius="10dp">
+
+    <TextView
+        android:id="@+id/itemNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Item Name"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/expiryDateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
+        android:text="Expiry Date"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="28dp"
+        android:background="@android:color/transparent"
+        android:onClick="onDeleteButtonClick"
+        android:src="@drawable/ic_delete"
+        android:tint="@color/white" />
+
+    <CheckBox
+        android:id="@+id/check_box_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="30dp"
+        android:buttonTint="@color/white"
+        android:shadowColor="@android:color/transparent" />
+</androidx.cardview.widget.CardView>

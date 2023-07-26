@@ -2,15 +2,22 @@ package com.example.recipefy;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class CardItem implements Parcelable {
+public class CardItem implements Parcelable, Serializable {
 
     private String itemName;
-    private Date expiryDate;
+    private String expiryDate;
+    private String id;
     private boolean isSelected;
 
-    public CardItem(String itemName, Date expiryDate) {
+    public CardItem() {
+        //empty for deserialization
+    }
+
+    public CardItem(String itemName, String expiryDate) {
         this.itemName = itemName;
         this.expiryDate = expiryDate;
         this.isSelected = false;
@@ -18,8 +25,15 @@ public class CardItem implements Parcelable {
 
     protected CardItem(Parcel in) {
         itemName = in.readString();
-        expiryDate = new Date(in.readLong());
+        expiryDate = String.valueOf(new Date(in.readLong()));
         isSelected = in.readByte() != 0;
+    }
+
+    private String userId;
+
+    public CardItem(String userId) {
+        // Assign other parameters...
+        this.userId = userId;
     }
 
     public static final Creator<CardItem> CREATOR = new Creator<CardItem>() {
@@ -38,8 +52,16 @@ public class CardItem implements Parcelable {
         return itemName;
     }
 
-    public Date getExpiryDate() {
+    public String getExpiryDate() {
         return expiryDate;
+    }
+
+    public void setTitle(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public boolean isSelected() {
@@ -50,6 +72,14 @@ public class CardItem implements Parcelable {
         isSelected = selected;
     }
 
+    public String getItemId() {
+        return id;
+    }
+
+    public void setItemId(String itemId) {
+        this.id = itemId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -58,7 +88,9 @@ public class CardItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(itemName);
-        dest.writeLong(expiryDate.getTime());
+        dest.writeLong(Long.parseLong(expiryDate));
         dest.writeByte((byte) (isSelected ? 1 : 0));
     }
+
+
 }
