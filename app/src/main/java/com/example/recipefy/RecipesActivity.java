@@ -29,23 +29,19 @@ import jxl.read.biff.BiffException;
 
 public class RecipesActivity extends AppCompatActivity {
 
-    private ArrayList<Adapter> adapterArrayList = new ArrayList<>();
-    private HomeActivity homeActivity;
+    private ArrayList<RecipesAdapter> adapterArrayList = new ArrayList<>();
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> selectedItemsList;
 
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
-    Adapter adapter;
+    RecipesAdapter adapter;
     AsyncHttpClient client;
     Workbook workbook;
     List<String> dishDescription, dishName, dishPicURL, dishIngredients;
 
 
-    public ArrayList<String> getSelectedItemsList() {
-        return selectedItemsList;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,7 @@ public class RecipesActivity extends AppCompatActivity {
 
     private void addData(ArrayList<String> usableIngredients) {
         // code for excel spreadsheet information
-        String url = "https://github.com/brindamoudgalya/MoonGate/blob/master/MoonGateFinalSheet.xls?raw=true";
+        String url = "https://github.com/tiredwren/recipefy/raw/master/FINAL%20RECIPE%20SPREADSHEET.xls";
         recyclerView = findViewById(R.id.recyclerView);
 
         dishDescription = new ArrayList<>();
@@ -116,7 +112,7 @@ public class RecipesActivity extends AppCompatActivity {
         });
     }
     private void showData() {
-        adapter = new Adapter(this, dishDescription, dishName, dishIngredients, dishPicURL);
+        adapter = new RecipesAdapter(this, dishDescription, dishName, dishIngredients, dishPicURL);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

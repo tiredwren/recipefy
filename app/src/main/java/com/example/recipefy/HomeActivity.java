@@ -49,8 +49,8 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     private static final String CHANNEL_ID = "expiry_channel";
 
     // Schedule notifications for items that are about to expire
-    private void scheduleNotificationsForExpiringItems() {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+    private void scheduleNotificationsForExpiringItems(NotificationManagerCompat notificationManager) {
+        notificationManager = NotificationManagerCompat.from(this);
 
 
         for (CardItem cardItem : cardList) {
@@ -107,6 +107,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         recyclerView.setAdapter(cardAdapter);
 
         textView = findViewById(R.id.logoutTextView);
+        ImageButton infoButton = findViewById(R.id.infoButton);
         ImageButton addButton = findViewById(R.id.btnAddItem);
         addButton.setOnClickListener(v -> showAddItemDialog());
 
@@ -116,7 +117,18 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
             for (String item : selectedItemsList) {
                 selectedItems += item + ", ";
             }
+
             Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, RecipesActivity.class);
+            intent.putStringArrayListExtra("selectedItemsList", selectedItemsList);
+            startActivity(intent);
+//            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
+        });
+
+        infoButton.setOnClickListener(view -> {
+            Toast.makeText(HomeActivity.this, "Add items by clicking the + at the top; select items you would like to use, then click search to find recipes to use those ingredients.", Toast.LENGTH_LONG).show();
+
         });
 
         loadDataFromFirebase();
@@ -127,6 +139,13 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
             }
         });
+
+
+        NotificationUtils.createNotificationChannel(this);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        scheduleNotificationsForExpiringItems(notificationManager);
     }
 
     private void showAddItemDialog() {
@@ -251,6 +270,10 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         } else {
             selectedItemsList.remove(selectedItem.getItemName());
         }
+    }
+
+    public ArrayList<String> getSelectedItemsList() {
+        return selectedItemsList;
     }
 
     private void loadDataFromFirebase() {
