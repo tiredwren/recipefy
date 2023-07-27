@@ -2,6 +2,8 @@ package com.example.recipefy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -24,8 +26,53 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText, confirmPasswordEditText;
     private Button registerButton;
     private TextView loginTextView;
+    private TextView passwordStrengthTextView;
+    private TextView uppercaseRequirementTextView;
+    private TextView lowercaseRequirementTextView;
+    private TextView specialCharRequirementTextView;
+
 
     private FirebaseAuth firebaseAuth;
+
+    private void updatePasswordRequirements(String password) {
+        boolean hasUppercase = Pattern.compile("[A-Z]").matcher(password).find();
+        boolean hasLowercase = Pattern.compile("[a-z]{5,}").matcher(password).find();
+        boolean hasSpecialChar = Pattern.compile("[!@#$%^&+=]").matcher(password).find();
+
+        int greenColor = getResources().getColor(R.color.green);
+        int redColor = getResources().getColor(R.color.dark_orange);
+
+        if (hasUppercase) {
+            uppercaseRequirementTextView.setTextColor(greenColor);
+        } else {
+            uppercaseRequirementTextView.setTextColor(redColor);
+        }
+
+        if (hasLowercase) {
+            lowercaseRequirementTextView.setTextColor(greenColor);
+        } else {
+            lowercaseRequirementTextView.setTextColor(redColor);
+        }
+
+        if (hasSpecialChar) {
+            specialCharRequirementTextView.setTextColor(greenColor);
+        } else {
+            specialCharRequirementTextView.setTextColor(redColor);
+        }
+    }
+
+    private void updatePasswordStrengthTextView(String password) {
+        TextView passwordStrengthTextView = findViewById(R.id.passwordStrengthTextView);
+        boolean isPasswordValid = isPasswordValid(password);
+
+        if (isPasswordValid) {
+            passwordStrengthTextView.setText("Password strength: Strong");
+            passwordStrengthTextView.setTextColor(getResources().getColor(R.color.green));
+        } else {
+            passwordStrengthTextView.setText("Password strength: Weak");
+            passwordStrengthTextView.setTextColor(getResources().getColor(R.color.dark_orange));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +113,31 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
+        passwordStrengthTextView = findViewById(R.id.passwordStrengthTextView);
+        uppercaseRequirementTextView = findViewById(R.id.uppercaseRequirementTextView);
+        lowercaseRequirementTextView = findViewById(R.id.lowercaseRequirementTextView);
+        specialCharRequirementTextView = findViewById(R.id.specialCharRequirementTextView);
+
+        // Update password requirements when the user enters a password
+        passwordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String password = s.toString();
+                updatePasswordStrengthTextView(password);
+                updatePasswordRequirements(password);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+
+
         loginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +152,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         // Password must have at least 5 lowercase letters, one uppercase letter, and one special character
-        String passwordPattern = "^(?=.*[a-z]{5,})(?=.*[A-Z])(?=.*[@#$%^&+=]).*$";
+        String passwordPattern = "^(?=.*[a-z]{5,})(?=.*[A-Z])(?=.*[@#$%^&+=!.<>?:;_]).*$";
         return Pattern.matches(passwordPattern, password);
     }
 
@@ -90,8 +162,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(RegistrationActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegistrationActivity.this, HomeActivity.class));
+                            startActivity(new Intent(RegistrationActivity.this, TutorialActivity.class));
                             finish();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();

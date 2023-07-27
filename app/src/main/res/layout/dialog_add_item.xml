@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -8,12 +9,19 @@
         android:id="@+id/editTextItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Item Name" />
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/jost"
+        android:hint="item name" />
 
     <Button
         android:id="@+id/button_expiry_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:background="@drawable/rounded_corners"
+        android:fontFamily="@font/jost"
+        android:text="e x p i r y  d a t e"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 
 </LinearLayout>

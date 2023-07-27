@@ -4,7 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class CardItem implements Parcelable, Serializable {
 
@@ -92,5 +95,15 @@ public class CardItem implements Parcelable, Serializable {
         dest.writeByte((byte) (isSelected ? 1 : 0));
     }
 
-
+    public Date getExpiryDateAsDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            return dateFormat.parse(expiryDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
+
+

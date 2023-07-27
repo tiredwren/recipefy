@@ -1,7 +1,11 @@
 package com.example.recipefy;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +13,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDeleteClickListener,
         CardAdapter.OnItemSelectListener {
@@ -37,6 +44,55 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     private CardAdapter cardAdapter;
     private ArrayList<CardItem> cardList;
     private ArrayList<String> selectedItemsList = new ArrayList<>();
+    private TextView textView;
+    private static final int NOTIFICATION_ID = 100;
+    private static final String CHANNEL_ID = "expiry_channel";
+
+    // Schedule notifications for items that are about to expire
+    private void scheduleNotificationsForExpiringItems() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+
+        for (CardItem cardItem : cardList) {
+            Date expiryDate = cardItem.getExpiryDateAsDate();
+            if (expiryDate != null) {
+                // Calculate the date 5 days before expiry
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(expiryDate);
+                calendar.add(Calendar.DAY_OF_MONTH, -5);
+                Date notificationDate = calendar.getTime();
+
+                // Check if the notification date is in the future and within the 10-day range
+                Date currentDate = new Date();
+                if (notificationDate.after(currentDate)) {
+                    // Schedule the notification
+                    scheduleNotification(notificationManager, cardItem.getItemId(), notificationDate);
+                }
+            }
+        }
+    }
+
+    private void scheduleNotification(NotificationManagerCompat notificationManager, String itemId, Date notificationDate) {
+        // Create a notification intent to be triggered when the notification fires
+        Intent notificationIntent = new Intent(this, NotificationReceiver.class);
+        notificationIntent.putExtra("item_id", itemId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        // Calculate the time delay until the notification fires
+        long delayInMillis = notificationDate.getTime() - System.currentTimeMillis();
+
+        // Schedule the notification using AlarmManager
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayInMillis, pendingIntent);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +106,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         cardAdapter = new CardAdapter(cardList, selectedItemsList, this, this);
         recyclerView.setAdapter(cardAdapter);
 
+        textView = findViewById(R.id.logoutTextView);
         ImageButton addButton = findViewById(R.id.btnAddItem);
         addButton.setOnClickListener(v -> showAddItemDialog());
 
@@ -63,6 +120,13 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         });
 
         loadDataFromFirebase();
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            }
+        });
     }
 
     private void showAddItemDialog() {
@@ -90,12 +154,12 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, dateSetListener, year, month, day);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, R.style.CustomDatePickerTheme, dateSetListener, year, month, day);
                 datePickerDialog.show();
             }
         });
 
-        dialogBuilder.setTitle("Add New Item");
+        dialogBuilder.setTitle("add new item");
         dialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String itemName = editTextItemName.getText().toString();
@@ -124,7 +188,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(HomeActivity.this, "Item added successfully", Toast.LENGTH_SHORT).show();
                                 cardAdapter.notifyDataSetChanged();
                             }
                         })
@@ -141,6 +204,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     @Override
     public void onDeleteClick(CardItem item) {
         deleteCardItem(item);
+        // AlarmManager.cancel(pendingIntent);
         cardAdapter.removeSelectedItem(item.getItemId());
     }
 
@@ -153,12 +217,18 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     .child("items")
                     .child(cardItem.getItemId());
 
+            // Get the notification ID associated with the item
+            int notificationId = cardItem.getItemId().hashCode();
+
             userItemsRef.removeValue()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(HomeActivity.this, "Item deleted successfully", Toast.LENGTH_SHORT).show();
                             cardList.remove(cardItem);
+
+                            // Remove the notification when the item is deleted
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(HomeActivity.this);
+                            notificationManager.cancel(notificationId);
 
                             cardAdapter.notifyDataSetChanged();
                         }
@@ -171,6 +241,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     });
         }
     }
+
 
     @Override
     public void onItemSelect(int position, boolean isSelected) {
