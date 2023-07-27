@@ -27,9 +27,7 @@
 
             android:name=".RecipesActivity"
             android:exported="false" />
-        <activity
-            android:name=".TutorialActivity"
-            android:exported="false" />
+
         <activity
             android:name=".HomeActivity"
             android:exported="false" />

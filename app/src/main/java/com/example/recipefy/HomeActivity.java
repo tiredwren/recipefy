@@ -318,9 +318,9 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         }
     }
 
-
     public ArrayList<String> getSelectedItemsList() {
         return selectedItemsList;
+    }
 
     private void showTutorial() {
         TutorialDialogFragment dialogFragment = new TutorialDialogFragment();
