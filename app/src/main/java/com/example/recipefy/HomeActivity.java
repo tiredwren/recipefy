@@ -112,16 +112,11 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
 
         Button selectedItemsButton = findViewById(R.id.button);
         selectedItemsButton.setOnClickListener(v -> {
-
-
             String selectedItems = "Selected items: ";
             for (String item : selectedItemsList) {
                 selectedItems += item + ", ";
             }
-            Intent intent = new Intent(this, RecipesActivity.class);
-            intent.putStringArrayListExtra("selectedItemsList", selectedItemsList);
-            startActivity(intent);
-//            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
         });
 
         loadDataFromFirebase();
@@ -256,10 +251,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         } else {
             selectedItemsList.remove(selectedItem.getItemName());
         }
-    }
-
-    public ArrayList<String> getSelectedItemsList() {
-        return selectedItemsList;
     }
 
     private void loadDataFromFirebase() {

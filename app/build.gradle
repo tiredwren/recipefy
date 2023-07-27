@@ -46,7 +46,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.google.firebase:firebase-database:20.2.2'
 
-    implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
-    implementation 'com.loopj.android:android-async-http:1.4.10'
-    implementation 'com.squareup.picasso:picasso:2.71828'
+
 }

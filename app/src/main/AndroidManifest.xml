@@ -19,9 +19,6 @@
         android:theme="@style/Theme.Recipefy"
         tools:targetApi="33">
         <activity
-            android:name=".RecipesActivity"
-            android:exported="false" />
-        <activity
             android:name=".TutorialActivity"
             android:exported="false" />
         <activity
