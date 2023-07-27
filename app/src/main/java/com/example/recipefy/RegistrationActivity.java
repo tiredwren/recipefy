@@ -162,7 +162,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(RegistrationActivity.this, TutorialActivity.class));
+                            startActivity(new Intent(RegistrationActivity.this, HomeActivity.class));
                             finish();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
