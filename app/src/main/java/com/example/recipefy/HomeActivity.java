@@ -33,12 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDeleteClickListener,
         CardAdapter.OnItemSelectListener {
@@ -51,7 +48,11 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     private static final int NOTIFICATION_ID = 100;
     private static final String CHANNEL_ID = "expiry_channel";
 
+    // Schedule notifications for items that are about to expire
     private void scheduleNotificationsForExpiringItems(NotificationManagerCompat notificationManager) {
+        notificationManager = NotificationManagerCompat.from(this);
+
+
         for (CardItem cardItem : cardList) {
             Date expiryDate = cardItem.getExpiryDateAsDate();
             if (expiryDate != null) {
@@ -59,47 +60,39 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(expiryDate);
                 calendar.add(Calendar.DAY_OF_MONTH, -5);
-                Date notificationDate5DaysBefore = calendar.getTime();
+                Date notificationDate = calendar.getTime();
 
                 // Check if the notification date is in the future and within the 10-day range
                 Date currentDate = new Date();
-                if (notificationDate5DaysBefore.after(currentDate)) {
-                    // Schedule the notification 5 days before expiry
-                    scheduleNotification(notificationManager, cardItem, notificationDate5DaysBefore);
-                }
-
-                // Calculate the date 10 days before expiry
-                calendar.setTime(expiryDate);
-                calendar.add(Calendar.DAY_OF_MONTH, -10);
-                Date notificationDate10DaysBefore = calendar.getTime();
-
-                if (notificationDate10DaysBefore.after(currentDate)) {
-                    // Schedule the notification 10 days before expiry
-                    scheduleNotification(notificationManager, cardItem, notificationDate10DaysBefore);
+                if (notificationDate.after(currentDate)) {
+                    // Schedule the notification
+                    scheduleNotification(notificationManager, cardItem.getItemId(), notificationDate);
                 }
             }
         }
     }
 
-    private void scheduleNotification(NotificationManagerCompat notificationManager, CardItem cardItem, Date notificationDate) {
+    private void scheduleNotification(NotificationManagerCompat notificationManager, String itemId, Date notificationDate) {
+        // Create a notification intent to be triggered when the notification fires
         Intent notificationIntent = new Intent(this, NotificationReceiver.class);
-        notificationIntent.putExtra("item_id", cardItem.getItemId());
-        notificationIntent.putExtra("item_name", cardItem.getItemName());
-        notificationIntent.putExtra("expiry_date", cardItem.getExpiryDate());
+        notificationIntent.putExtra("item_id", itemId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this,
-                cardItem.getItemId().hashCode(),
+                0,
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
 
+        // Calculate the time delay until the notification fires
         long delayInMillis = notificationDate.getTime() - System.currentTimeMillis();
 
+        // Schedule the notification using AlarmManager
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayInMillis, pendingIntent);
         }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,18 +107,19 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         recyclerView.setAdapter(cardAdapter);
 
         textView = findViewById(R.id.logoutTextView);
-        ImageButton addButton = findViewById(R.id.btnAddItem);
         ImageButton infoButton = findViewById(R.id.infoButton);
+        ImageButton addButton = findViewById(R.id.btnAddItem);
         addButton.setOnClickListener(v -> showAddItemDialog());
 
         Button selectedItemsButton = findViewById(R.id.button);
         selectedItemsButton.setOnClickListener(v -> {
-
-
             String selectedItems = "Selected items: ";
             for (String item : selectedItemsList) {
                 selectedItems += item + ", ";
             }
+
+            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, RecipesActivity.class);
             intent.putStringArrayListExtra("selectedItemsList", selectedItemsList);
             startActivity(intent);
@@ -134,6 +128,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
 
         infoButton.setOnClickListener(view -> {
             Toast.makeText(HomeActivity.this, "Add items by clicking the + at the top; select items you would like to use, then click search to find recipes to use those ingredients.", Toast.LENGTH_LONG).show();
+
         });
 
         loadDataFromFirebase();
@@ -144,6 +139,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
             }
         });
+
 
         NotificationUtils.createNotificationChannel(this);
 
@@ -187,31 +183,15 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
             public void onClick(DialogInterface dialog, int whichButton) {
                 String itemName = editTextItemName.getText().toString();
                 String expiryDate = expiryDateButton.getText().toString();
-
-                Date expiryDateAsDate = null;
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                    expiryDateAsDate = sdf.parse(expiryDate);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                if (expiryDateAsDate == null || expiryDateAsDate.before(new Date())) {
-                    Toast.makeText(HomeActivity.this, "Please select a valid expiry date.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Add the card item to Firebase database
-                addCardItem(itemName, expiryDate, expiryDateAsDate);
+                addCardItem(itemName, expiryDate);
             }
         });
-
         dialogBuilder.setNegativeButton("Cancel", null);
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
 
-    private void addCardItem(String itemName, String expiryDate, Date expiryDateAsDate) {
+    private void addCardItem(String itemName, String expiryDate) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             DatabaseReference userItemsRef = FirebaseDatabase.getInstance()
@@ -227,10 +207,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                // After the item has been added to the Firebase database,
-                                // schedule the notifications for expiring items
-                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(HomeActivity.this);
-                                scheduleNotificationsForExpiringItems(notificationManager);
                                 cardAdapter.notifyDataSetChanged();
                             }
                         })
@@ -247,6 +223,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     @Override
     public void onDeleteClick(CardItem item) {
         deleteCardItem(item);
+        // AlarmManager.cancel(pendingIntent);
         cardAdapter.removeSelectedItem(item.getItemId());
     }
 
@@ -259,33 +236,19 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     .child("items")
                     .child(cardItem.getItemId());
 
+            // Get the notification ID associated with the item
             int notificationId = cardItem.getItemId().hashCode();
 
-            // Cancel the pending notification associated with the deleted item
-            Intent notificationIntent = new Intent(this, NotificationReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    cardItem.getItemId().hashCode(),
-                    notificationIntent,
-                    PendingIntent.FLAG_NO_CREATE // Get existing PendingIntent without creating a new one
-            );
-
-            if (pendingIntent != null) {
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                if (alarmManager != null) {
-                    alarmManager.cancel(pendingIntent);
-                }
-                pendingIntent.cancel();
-            }
-
-            // Remove the item from Firebase database
             userItemsRef.removeValue()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             cardList.remove(cardItem);
+
+                            // Remove the notification when the item is deleted
                             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(HomeActivity.this);
                             notificationManager.cancel(notificationId);
+
                             cardAdapter.notifyDataSetChanged();
                         }
                     })
@@ -321,6 +284,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     .child(currentUser.getUid())
                     .child("items");
 
+            // Add a ValueEventListener to keep track of selected items
             userItemsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -332,6 +296,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                             cardItem.setItemId(itemSnapshot.getKey());
                             cardList.add(cardItem);
 
+                            // Check if the item is selected and add it to the selectedItemsList
                             if (cardItem.isSelected()) {
                                 selectedItemsList.add(cardItem.getItemId());
                             }

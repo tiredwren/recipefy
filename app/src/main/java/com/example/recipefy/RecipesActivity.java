@@ -30,7 +30,6 @@ import jxl.read.biff.BiffException;
 public class RecipesActivity extends AppCompatActivity {
 
     private ArrayList<RecipesAdapter> adapterArrayList = new ArrayList<>();
-    private HomeActivity homeActivity;
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> selectedItemsList;
 
@@ -43,9 +42,6 @@ public class RecipesActivity extends AppCompatActivity {
     List<String> dishDescription, dishName, dishPicURL, dishIngredients;
 
 
-    public ArrayList<String> getSelectedItemsList() {
-        return selectedItemsList;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,7 @@ public class RecipesActivity extends AppCompatActivity {
 
     private void addData(ArrayList<String> usableIngredients) {
         // code for excel spreadsheet information
-        String url = "https://github.com/brindamoudgalya/MoonGate/blob/master/MoonGateFinalSheet.xls?raw=true";
+        String url = "https://github.com/tiredwren/recipefy/raw/master/FINAL%20RECIPE%20SPREADSHEET.xls";
         recyclerView = findViewById(R.id.recyclerView);
 
         dishDescription = new ArrayList<>();
