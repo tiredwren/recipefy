@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 // reference: https://www.youtube.com/watch?v=kxdVo4RH3nE
+// test for commit
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
