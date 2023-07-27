@@ -1,7 +1,5 @@
 package com.example.recipefy;
 
-import static com.example.recipefy.NotificationUtils.CHANNEL_ID;
-
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -18,18 +16,20 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null) {
-            String itemId = intent.getStringExtra("item_id");
             String itemName = intent.getStringExtra("item_name");
+            String expiryDate = intent.getStringExtra("expiry_date");
 
-            int notificationId = itemId.hashCode();
+            int notificationId = itemName.hashCode();
+
+            String notificationText = "Your item " + itemName + " will expire soon, on " + expiryDate;
 
             Intent appIntent = new Intent(context, HomeActivity.class);
             PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, 0);
 
-            Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+            Notification notification = new NotificationCompat.Builder(context, NotificationUtils.CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle("Item Expiry Reminder")
-                    .setContentText("Your item " + itemName + " is about to expire.")
+                    .setContentText(notificationText)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(appPendingIntent)
                     .setAutoCancel(true)
