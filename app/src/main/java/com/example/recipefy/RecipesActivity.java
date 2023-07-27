@@ -29,7 +29,7 @@ import jxl.read.biff.BiffException;
 
 public class RecipesActivity extends AppCompatActivity {
 
-    private ArrayList<Adapter> adapterArrayList = new ArrayList<>();
+    private ArrayList<RecipesAdapter> adapterArrayList = new ArrayList<>();
     private HomeActivity homeActivity;
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> selectedItemsList;
@@ -37,7 +37,7 @@ public class RecipesActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
-    Adapter adapter;
+    RecipesAdapter adapter;
     AsyncHttpClient client;
     Workbook workbook;
     List<String> dishDescription, dishName, dishPicURL, dishIngredients;
@@ -116,7 +116,7 @@ public class RecipesActivity extends AppCompatActivity {
         });
     }
     private void showData() {
-        adapter = new Adapter(this, dishDescription, dishName, dishIngredients, dishPicURL);
+        adapter = new RecipesAdapter(this, dishDescription, dishName, dishIngredients, dishPicURL);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

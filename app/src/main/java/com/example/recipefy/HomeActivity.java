@@ -6,9 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -135,7 +133,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         });
 
         infoButton.setOnClickListener(view -> {
-            Toast.makeText(HomeActivity.this,"Add items by clicking the + at the top; select items you would like to use, then click search to find recipes to use those ingredients.", Toast.LENGTH_LONG).show();
+            Toast.makeText(HomeActivity.this, "Add items by clicking the + at the top; select items you would like to use, then click search to find recipes to use those ingredients.", Toast.LENGTH_LONG).show();
         });
 
         loadDataFromFirebase();
@@ -152,13 +150,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
         scheduleNotificationsForExpiringItems(notificationManager);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isTutorialShown = sharedPreferences.getBoolean("is_tutorial_shown", false);
-        if (!isTutorialShown) {
-            showTutorial();
-            sharedPreferences.edit().putBoolean("is_tutorial_shown", true).apply();
-        }
     }
 
     private void showAddItemDialog() {
@@ -320,11 +311,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
 
     public ArrayList<String> getSelectedItemsList() {
         return selectedItemsList;
-    }
-
-    private void showTutorial() {
-        TutorialDialogFragment dialogFragment = new TutorialDialogFragment();
-        dialogFragment.show(getSupportFragmentManager(), "tutorial_dialog");
     }
 
     private void loadDataFromFirebase() {

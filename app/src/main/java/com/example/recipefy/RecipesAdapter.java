@@ -16,13 +16,13 @@ import java.util.List;
 
 // reference: https://www.youtube.com/watch?v=kxdVo4RH3nE
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHolder> {
 
     LayoutInflater inflater;
     List<String> dishDescription, dishName, dishIngredients, picURL;
 
-    public Adapter(Context context, List<String> dishDescription, List<String> dishName,
-                   List<String> dishIngredients, List<String> dishPicURL){
+    public RecipesAdapter(Context context, List<String> dishDescription, List<String> dishName,
+                          List<String> dishIngredients, List<String> dishPicURL){
         this.inflater= LayoutInflater.from(context);
         this.dishDescription = dishDescription;
         this.dishName = dishName;
