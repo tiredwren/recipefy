@@ -10,4 +10,16 @@
         <item name="colorSecondaryVariant">@color/blue</item>
         <item name="colorOnSecondary">@color/gray</item>
     </style>
+    <style name="DatePickerStyle" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <!-- Change the background color to your desired color -->
+        <item name="android:colorBackground">@color/light_orange</item>
+    </style>
+    <style name="CustomDatePickerTheme" parent="ThemeOverlay.AppCompat.Dialog">
+        <!-- Customize the colors as per your requirements -->
+        <item name="colorAccent">@color/dark_orange</item>
+        <item name="android:textColorPrimary">@color/light_orange</item>
+        <item name="android:textColorSecondary">@color/gray</item>
+        <item name="backgroundColor">@color/white</item>
+    </style>
+
 </resources>

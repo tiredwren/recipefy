@@ -3,7 +3,12 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical"
     android:padding="8dp"
     app:cardBackgroundColor="@color/light_orange"
@@ -13,7 +18,8 @@
         android:id="@+id/itemNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
         android:text="Item Name"
         android:textColor="@color/white"
         android:textSize="16sp" />
@@ -22,7 +28,7 @@
         android:id="@+id/expiryDateTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="70dp"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="20dp"
         android:text="Expiry Date"
@@ -38,13 +44,13 @@
         android:background="@android:color/transparent"
         android:onClick="onDeleteButtonClick"
         android:src="@drawable/ic_delete"
-        android:tint="@color/white" />
+        app:tint="@color/white" />
 
     <CheckBox
         android:id="@+id/check_box_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="200dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:buttonTint="@color/white"
         android:shadowColor="@android:color/transparent" />
