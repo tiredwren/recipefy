@@ -95,14 +95,19 @@ public class RecipesActivity extends AppCompatActivity {
                                 dishIngredients.add(row[4].getContents());
                                 dishPicURL.add(row[3].getContents());
                             } else {
+                                boolean hasAll = true;
                                 for (String ingredient : usableIngredients) {
-                                    if (row[4].getContents().toLowerCase(Locale.ROOT).contains(ingredient)) {
-                                        dishDescription.add(row[2].getContents());
-                                        dishRecipeURL.add(row[0].getContents());
-                                        dishName.add(row[1].getContents());
-                                        dishIngredients.add(row[4].getContents());
-                                        dishPicURL.add(row[3].getContents());
-                                    }}
+                                    if (!row[4].getContents().toLowerCase(Locale.ROOT).contains(ingredient)) {
+                                        hasAll = false;
+                                    }
+                                }
+                                if (hasAll) {
+                                    dishDescription.add(row[2].getContents());
+                                    dishRecipeURL.add(row[0].getContents());
+                                    dishName.add(row[1].getContents());
+                                    dishIngredients.add(row[4].getContents());
+                                    dishPicURL.add(row[3].getContents());
+                                }
                             }
                         }
 
