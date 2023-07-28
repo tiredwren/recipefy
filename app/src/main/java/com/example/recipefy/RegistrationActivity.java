@@ -24,9 +24,6 @@ import java.util.regex.Pattern;
 public class RegistrationActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText, confirmPasswordEditText;
-    private Button registerButton;
-    private TextView loginTextView;
-    private TextView passwordStrengthTextView;
     private TextView uppercaseRequirementTextView;
     private TextView lowercaseRequirementTextView;
     private TextView specialCharRequirementTextView;
@@ -84,8 +81,8 @@ public class RegistrationActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.registerEmailEditText);
         passwordEditText = findViewById(R.id.registerPasswordEditText);
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
-        registerButton = findViewById(R.id.registerButton);
-        loginTextView = findViewById(R.id.loginTextView);
+        Button registerButton = findViewById(R.id.registerButton);
+        TextView loginTextView = findViewById(R.id.loginTextView);
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +110,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
-        passwordStrengthTextView = findViewById(R.id.passwordStrengthTextView);
+        TextView passwordStrengthTextView = findViewById(R.id.passwordStrengthTextView);
         uppercaseRequirementTextView = findViewById(R.id.uppercaseRequirementTextView);
         lowercaseRequirementTextView = findViewById(R.id.lowercaseRequirementTextView);
         specialCharRequirementTextView = findViewById(R.id.specialCharRequirementTextView);
