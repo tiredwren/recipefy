@@ -59,7 +59,7 @@ public class RecipesActivity extends AppCompatActivity {
 
     private void addData(ArrayList<String> usableIngredients) {
         // url is from github, xls file
-        String url = "https://github.com/tiredwren/recipefy/raw/master/SHORTER%20DESCRIPTIONS%20-%20FINAL%20RECIPE%20SPREADSHEET.xls";
+        String url = "https://github.com/tiredwren/recipefy/raw/master/RECIPE%20SPREADSHEET%20FINAL.xls";
         recyclerView = findViewById(R.id.recyclerView);
 
         // creating arraylists for each part of the card
