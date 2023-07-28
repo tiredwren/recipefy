@@ -48,24 +48,19 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     private static final int NOTIFICATION_ID = 100;
     private static final String CHANNEL_ID = "expiry_channel";
 
-    // Schedule notifications for items that are about to expire
     private void scheduleNotificationsForExpiringItems(NotificationManagerCompat notificationManager) {
         notificationManager = NotificationManagerCompat.from(this);
-
 
         for (CardItem cardItem : cardList) {
             Date expiryDate = cardItem.getExpiryDateAsDate();
             if (expiryDate != null) {
-                // Calculate the date 5 days before expiry
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(expiryDate);
                 calendar.add(Calendar.DAY_OF_MONTH, -5);
                 Date notificationDate = calendar.getTime();
 
-                // Check if the notification date is in the future and within the 10-day range
                 Date currentDate = new Date();
                 if (notificationDate.after(currentDate)) {
-                    // Schedule the notification
                     scheduleNotification(notificationManager, cardItem.getItemId(), notificationDate);
                 }
             }
@@ -73,7 +68,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     }
 
     private void scheduleNotification(NotificationManagerCompat notificationManager, String itemId, Date notificationDate) {
-        // Create a notification intent to be triggered when the notification fires
         Intent notificationIntent = new Intent(this, NotificationReceiver.class);
         notificationIntent.putExtra("item_id", itemId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -83,16 +77,13 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        // Calculate the time delay until the notification fires
         long delayInMillis = notificationDate.getTime() - System.currentTimeMillis();
 
-        // Schedule the notification using AlarmManager
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayInMillis, pendingIntent);
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,17 +109,13 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 selectedItems += item + ", ";
             }
 
-            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
-
             Intent intent = new Intent(this, RecipesActivity.class);
             intent.putStringArrayListExtra("selectedItemsList", selectedItemsList);
             startActivity(intent);
-//            Toast.makeText(HomeActivity.this, selectedItems, Toast.LENGTH_SHORT).show();
         });
 
         infoButton.setOnClickListener(view -> {
             Toast.makeText(HomeActivity.this, "Add items by clicking the + at the top; select items you would like to use, then click search to find recipes to use those ingredients.", Toast.LENGTH_LONG).show();
-
         });
 
         loadDataFromFirebase();
@@ -139,7 +126,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
             }
         });
-
 
         NotificationUtils.createNotificationChannel(this);
 
@@ -223,7 +209,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     @Override
     public void onDeleteClick(CardItem item) {
         deleteCardItem(item);
-        // AlarmManager.cancel(pendingIntent);
         cardAdapter.removeSelectedItem(item.getItemId());
     }
 
@@ -236,7 +221,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     .child("items")
                     .child(cardItem.getItemId());
 
-            // Get the notification ID associated with the item
             int notificationId = cardItem.getItemId().hashCode();
 
             userItemsRef.removeValue()
@@ -244,11 +228,8 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                         @Override
                         public void onSuccess(Void aVoid) {
                             cardList.remove(cardItem);
-
-                            // Remove the notification when the item is deleted
                             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(HomeActivity.this);
                             notificationManager.cancel(notificationId);
-
                             cardAdapter.notifyDataSetChanged();
                         }
                     })
@@ -260,7 +241,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     });
         }
     }
-
 
     @Override
     public void onItemSelect(int position, boolean isSelected) {
@@ -284,7 +264,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                     .child(currentUser.getUid())
                     .child("items");
 
-            // Add a ValueEventListener to keep track of selected items
             userItemsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -296,7 +275,6 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                             cardItem.setItemId(itemSnapshot.getKey());
                             cardList.add(cardItem);
 
-                            // Check if the item is selected and add it to the selectedItemsList
                             if (cardItem.isSelected()) {
                                 selectedItemsList.add(cardItem.getItemId());
                             }

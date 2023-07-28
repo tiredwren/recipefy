@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAlignment="gravity">
+    android:textAlignment="center">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -19,46 +19,56 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:background="@color/light_orange">
 
             <TextView
                 android:id="@+id/dishNameTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/jost_medium"
                 android:text="TextView"
-                android:textAlignment="textStart"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/dishDescriptionTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pictureOfDish"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/dishDescriptionTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/jost"
                 android:text="TextView"
-                android:textAlignment="textStart"
+                android:textAlignment="gravity"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pictureOfDish" />
+                app:layout_constraintHorizontal_bias="0.428"
+                app:layout_constraintStart_toEndOf="@+id/pictureOfDish"
+                app:layout_constraintTop_toBottomOf="@+id/dishNameTextView" />
 
             <ImageView
                 android:id="@+id/pictureOfDish"
-                android:layout_width="111dp"
-                android:layout_height="79dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
                 android:textAlignment="textStart"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.003"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
                 app:srcCompat="@drawable/ic_launcher_background" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

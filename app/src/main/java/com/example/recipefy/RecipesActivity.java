@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -29,48 +29,43 @@ import jxl.read.biff.BiffException;
 
 public class RecipesActivity extends AppCompatActivity {
 
-    private ArrayList<RecipesAdapter> adapterArrayList = new ArrayList<>();
-    private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> selectedItemsList;
 
-
     RecyclerView recyclerView;
+
+    ImageButton backButton;
     ProgressBar progressBar;
     RecipesAdapter adapter;
     AsyncHttpClient client;
     Workbook workbook;
-    List<String> dishDescription, dishName, dishPicURL, dishIngredients;
-
-
+    List<String> dishDescription, dishName, dishPicURL, dishIngredients, dishRecipeURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
 
-        // Retrieve the selectedItemsList from the intent
         Intent intent = getIntent();
         selectedItemsList = intent.getStringArrayListExtra("selectedItemsList");
 
-        // connecting activity to xml components
         progressBar = findViewById(R.id.progressBar);
+        backButton = findViewById(R.id.imageButton);
         addData(selectedItemsList);
 
-        // setting array adapter, which sets the information displayed in the searchview
-        arrayAdapter = new ArrayAdapter<>
-                (this, R.layout.list_item, R.id.dishNameTextView, dishName);
-
+        backButton.setOnClickListener(view -> {
+            startActivity(new Intent(this,HomeActivity.class));
+        });
     }
 
     private void addData(ArrayList<String> usableIngredients) {
-        // code for excel spreadsheet information
-        String url = "https://github.com/tiredwren/recipefy/raw/master/FINAL%20RECIPE%20SPREADSHEET.xls";
+        String url = "https://github.com/tiredwren/recipefy/raw/master/SHORTER%20DESCRIPTIONS%20-%20FINAL%20RECIPE%20SPREADSHEET.xls";
         recyclerView = findViewById(R.id.recyclerView);
 
         dishDescription = new ArrayList<>();
         dishName = new ArrayList<>();
         dishPicURL = new ArrayList<>();
         dishIngredients = new ArrayList<>();
+        dishRecipeURL = new ArrayList<>();
 
         client = new AsyncHttpClient();
         progressBar.setVisibility(View.VISIBLE);
@@ -90,15 +85,24 @@ public class RecipesActivity extends AppCompatActivity {
                     try {
                         workbook = Workbook.getWorkbook(file);
                         Sheet sheet = workbook.getSheet(0);
-                        for (int i = 0; i < sheet.getRows(); i++) {
+                        for (int i = 1; i < sheet.getRows(); i++) {
                             Cell[] row = sheet.getRow(i);
-                            for (String ingredient : usableIngredients) {
-                                if (row[4].getContents().toLowerCase(Locale.ROOT).contains(ingredient)) {
-                                    dishDescription.add(row[2].getContents());
-                                    dishName.add(row[1].getContents());
-                                    dishIngredients.add(row[4].getContents());
-                                    dishPicURL.add(row[3].getContents());
-                                }
+
+                            if (usableIngredients.isEmpty()) {
+                                dishDescription.add(row[2].getContents());
+                                dishRecipeURL.add(row[0].getContents());
+                                dishName.add(row[1].getContents());
+                                dishIngredients.add(row[4].getContents());
+                                dishPicURL.add(row[3].getContents());
+                            } else {
+                                for (String ingredient : usableIngredients) {
+                                    if (row[4].getContents().toLowerCase(Locale.ROOT).contains(ingredient)) {
+                                        dishDescription.add(row[2].getContents());
+                                        dishRecipeURL.add(row[0].getContents());
+                                        dishName.add(row[1].getContents());
+                                        dishIngredients.add(row[4].getContents());
+                                        dishPicURL.add(row[3].getContents());
+                                    }}
                             }
                         }
 
@@ -111,10 +115,10 @@ public class RecipesActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showData() {
-        adapter = new RecipesAdapter(this, dishDescription, dishName, dishIngredients, dishPicURL);
+        adapter = new RecipesAdapter(this, dishDescription, dishName, dishIngredients, dishPicURL, dishRecipeURL);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
-
 }
