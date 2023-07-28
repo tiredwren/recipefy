@@ -118,7 +118,7 @@ public class RegistrationActivity extends AppCompatActivity {
         lowercaseRequirementTextView = findViewById(R.id.lowercaseRequirementTextView);
         specialCharRequirementTextView = findViewById(R.id.specialCharRequirementTextView);
 
-        // Update password requirements when the user enters a password
+        // update password requirements when the user enters a password
         passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -157,14 +157,14 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void registerUser(String email, String password) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        firebaseAuth.createUserWithEmailAndPassword(email, password) // creating new user id
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             startActivity(new Intent(RegistrationActivity.this, HomeActivity.class));
                             finish();
-                        } else {
+                        } else { // might be because the email is already registered or there is an error in firebase
                             Toast.makeText(RegistrationActivity.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
                         }
                     }

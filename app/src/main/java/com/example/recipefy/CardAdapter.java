@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
-
     private final ArrayList<CardItem> cardList;
     private final ArrayList<String> selectedItemsList;
     private final OnDeleteClickListener deleteClickListener;
@@ -39,6 +38,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+        // Setting inputted name and expiry date to holder
         CardItem currentItem = cardList.get(position);
         holder.textViewItemName.setText(currentItem.getItemName());
         holder.textViewExpiryDate.setText(currentItem.getExpiryDate());
@@ -52,9 +52,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     public class CardViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textViewItemName;
-        private TextView textViewExpiryDate;
-        private CheckBox checkBoxItemSelect;
+        private final TextView textViewItemName;
+        private final TextView textViewExpiryDate;
+        private final CheckBox checkBoxItemSelect;
 
         public CardViewHolder(@NonNull View itemView, OnDeleteClickListener deleteClickListener,
                               OnItemSelectListener itemSelectListener) {
@@ -64,21 +64,19 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             textViewExpiryDate = itemView.findViewById(R.id.expiryDateTextView);
             checkBoxItemSelect = itemView.findViewById(R.id.check_box_select);
 
-            checkBoxItemSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                itemSelectListener.onItemSelect(getAdapterPosition(), isChecked);
-            });
+            // When checkbox is clicked, itemSelectListener interface is called
+            checkBoxItemSelect.setOnCheckedChangeListener((buttonView, isChecked) -> itemSelectListener.onItemSelect(getAdapterPosition(), isChecked));
 
-            itemView.findViewById(R.id.btnDelete).setOnClickListener(v -> {
-                deleteClickListener.onDeleteClick(cardList.get(getAdapterPosition()));
-            });
+            // When delete button is clicked, deleteClickListener interface is called
+            itemView.findViewById(R.id.btnDelete).setOnClickListener(v -> deleteClickListener.onDeleteClick(cardList.get(getAdapterPosition())));
         }
     }
 
     public interface OnDeleteClickListener {
-        void onDeleteClick(CardItem item);
+        void onDeleteClick(CardItem item); // Method from HomeActivity
     }
 
     public interface OnItemSelectListener {
-        void onItemSelect(int position, boolean isSelected);
+        void onItemSelect(int position, boolean isSelected); // Method from HomeActivity
     }
 }

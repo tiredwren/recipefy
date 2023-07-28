@@ -19,8 +19,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton;
-    private TextView registerTextView;
 
     private FirebaseAuth firebaseAuth;
 
@@ -29,12 +27,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //initializing firebase
         firebaseAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.loginEmailEditText);
         passwordEditText = findViewById(R.id.loginPasswordEditText);
-        loginButton = findViewById(R.id.loginButton);
-        registerTextView = findViewById(R.id.registerTextView);
+        Button loginButton = findViewById(R.id.loginButton);
+        TextView registerTextView = findViewById(R.id.registerTextView);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,13 +42,14 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
                 } else {
                     loginUser(email, password);
                 }
             }
         });
 
+        // link to registration activity if user is not already registered
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // pass user to home activity when logged in
     private void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -66,6 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             finish();
+
+                            // if user is not registered, email is incorrect, or password is incorrect
                         } else {
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();

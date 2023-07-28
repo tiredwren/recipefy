@@ -17,7 +17,7 @@ public class CardItem implements Parcelable, Serializable {
     private boolean isSelected;
 
     public CardItem() {
-        //empty for deserialization
+        // empty for deserialization
     }
 
     public CardItem(String itemName, String expiryDate) {
@@ -26,6 +26,7 @@ public class CardItem implements Parcelable, Serializable {
         this.isSelected = false;
     }
 
+    // getting string values by parsing
     protected CardItem(Parcel in) {
         itemName = in.readString();
         expiryDate = String.valueOf(new Date(in.readLong()));
@@ -34,8 +35,8 @@ public class CardItem implements Parcelable, Serializable {
 
     private String userId;
 
+
     public CardItem(String userId) {
-        // Assign other parameters...
         this.userId = userId;
     }
 
@@ -51,6 +52,7 @@ public class CardItem implements Parcelable, Serializable {
         }
     };
 
+    // setters, getters, etc.:
     public String getItemName() {
         return itemName;
     }
@@ -96,6 +98,7 @@ public class CardItem implements Parcelable, Serializable {
     }
 
     public Date getExpiryDateAsDate() {
+        // setting date format (MM/dd is used by most of the world, so we kept it)
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         try {
             return dateFormat.parse(expiryDate);

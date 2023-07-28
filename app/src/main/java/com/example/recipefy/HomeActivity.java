@@ -48,6 +48,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     private static final int NOTIFICATION_ID = 100;
     private static final String CHANNEL_ID = "expiry_channel";
 
+    // notifications!
     private void scheduleNotificationsForExpiringItems(NotificationManagerCompat notificationManager) {
         notificationManager = NotificationManagerCompat.from(this);
 
@@ -90,6 +91,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // setting layout of cards on home page
         recyclerView = findViewById(R.id.cardRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -109,6 +111,8 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
                 selectedItems += item + ", ";
             }
 
+            // when button is pressed
+            // go to the RecipesActivity page
             Intent intent = new Intent(this, RecipesActivity.class);
             intent.putStringArrayListExtra("selectedItemsList", selectedItemsList);
             startActivity(intent);
@@ -178,6 +182,7 @@ public class HomeActivity extends AppCompatActivity implements CardAdapter.OnDel
     }
 
     private void addCardItem(String itemName, String expiryDate) {
+        // firebase linking
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             DatabaseReference userItemsRef = FirebaseDatabase.getInstance()

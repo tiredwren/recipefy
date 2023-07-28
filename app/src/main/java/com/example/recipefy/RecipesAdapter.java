@@ -49,7 +49,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         holder.dish.setText(dish);
 
         if (picURL != null && !picURL.isEmpty()) {
-            // Load the image using Picasso
+            // load the image using Picasso
             Picasso.get()
                     .load(picURL)
                     .fit()
@@ -57,17 +57,16 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                     .into(holder.image, new Callback() {
                         @Override
                         public void onSuccess() {
-                            // Image loaded successfully
+                            // image loaded successfully
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            // Handle errors here
                             e.printStackTrace();
                         }
                     });
         } else {
-            // If the image URL is empty, you can set a placeholder image
+            // if the image URL is empty, setting a placeholder image
             holder.image.setImageResource(R.drawable.placeholder_image);
         }
 

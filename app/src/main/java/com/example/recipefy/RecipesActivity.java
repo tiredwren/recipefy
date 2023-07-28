@@ -58,9 +58,11 @@ public class RecipesActivity extends AppCompatActivity {
     }
 
     private void addData(ArrayList<String> usableIngredients) {
+        // url is from github, xls file
         String url = "https://github.com/tiredwren/recipefy/raw/master/SHORTER%20DESCRIPTIONS%20-%20FINAL%20RECIPE%20SPREADSHEET.xls";
         recyclerView = findViewById(R.id.recyclerView);
 
+        // creating arraylists for each part of the card
         dishDescription = new ArrayList<>();
         dishName = new ArrayList<>();
         dishPicURL = new ArrayList<>();
@@ -71,6 +73,7 @@ public class RecipesActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         client.get(url, new FileAsyncHttpResponseHandler(this) {
             @Override
+            // error catching so app doesn't crash
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(RecipesActivity.this, "Download Failed.", Toast.LENGTH_SHORT).show();
@@ -83,11 +86,13 @@ public class RecipesActivity extends AppCompatActivity {
                 ws.setGCDisabled(true);
                 if (file != null) {
                     try {
+                        // accessing the excel downloaded spreadsheet
                         workbook = Workbook.getWorkbook(file);
                         Sheet sheet = workbook.getSheet(0);
                         for (int i = 1; i < sheet.getRows(); i++) {
                             Cell[] row = sheet.getRow(i);
 
+                            // shows all available recipes if no specific ingredients are specified
                             if (usableIngredients.isEmpty()) {
                                 dishDescription.add(row[2].getContents());
                                 dishRecipeURL.add(row[0].getContents());
@@ -95,6 +100,7 @@ public class RecipesActivity extends AppCompatActivity {
                                 dishIngredients.add(row[4].getContents());
                                 dishPicURL.add(row[3].getContents());
                             } else {
+                                // making sure the recipes shown contain ALL chosen ingredients
                                 boolean hasAll = true;
                                 for (String ingredient : usableIngredients) {
                                     if (!row[4].getContents().toLowerCase(Locale.ROOT).contains(ingredient)) {
@@ -122,6 +128,7 @@ public class RecipesActivity extends AppCompatActivity {
     }
 
     private void showData() {
+        // calling adapter class
         adapter = new RecipesAdapter(this, dishDescription, dishName, dishIngredients, dishPicURL, dishRecipeURL);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
